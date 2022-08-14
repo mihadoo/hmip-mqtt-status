@@ -6,3 +6,7 @@ This python script runs "hmip_cli.py --list-devices" once or every X seconds (pa
 Make sure that "hmip_cli.py --list-devices" is working from command line before using the python script. You can get hmip_cli.py and instructions how to get it running with the Homematic IP Bridge here:
 
 https://github.com/hahn-th/homematicip-rest-api
+
+This is an example of what is reported over MQTT:
+
+![MQTT Explorer](HMtoMQTT.png?raw=true "MQTT Explorer")
