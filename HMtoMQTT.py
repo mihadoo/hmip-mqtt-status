@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-# run "hmip_cli.py --list-devices" every 60 seconds and report device status over MQTT
+# runs "hmip_cli.py --list-devices" every X seconds and reports device status over MQTT
+# pass the number of seconds as the first parameter, if not it will only run once
 
 import datetime, time
 from datetime import datetime
@@ -47,6 +48,14 @@ def on_disconnect_handler(client, userdata, rc):
 
 def on_log_handler(client, userdata, level, buf):
     print("log: ",buf)
+
+def GetRepeatSeconds():
+    if len(sys.argv) < 2:
+        return(0)
+    try:
+        return(int(sys.argv[1]))
+    except ValueError:
+        return(0)
 
 def ProcessHMDevice(id, data):
     i = data.find("(")
@@ -117,6 +126,8 @@ signal.signal(signal.SIGINT, sigint_handler)
 client.publish(MQTTtopic + "status", "running")
 client.publish(MQTTtopic + "ip", myip)
 
+lastreadtime = datetime.utcnow() - timedelta(days=1)
+
 while 1:
     # body of the loop ...
     # Fill a string with date, humidity and temperature
@@ -145,7 +156,11 @@ while 1:
         print("Exception message : %s" %ex_value)
         print("Stack trace : %s" %stack_trace)
 
-    time.sleep(60)
+    rsecs = GetRepeatSeconds()
+    if rsecs > 0:
+        time.sleep(rsecs)
+    else:
+        break
 
 print("Stopping script")
 
